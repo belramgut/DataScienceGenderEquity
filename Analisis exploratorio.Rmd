@@ -1,0 +1,124 @@
+---
+title: "Análisis exploratorio"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+remove(list = ls())
+library(tidyverse)
+```
+
+```{r}
+datos <- read_csv("wbldata.csv")
+datos$region[datos$region == "High income: OECD"] <- "OECD"
+attach(datos)
+```
+
+### Frecuencia y moda
+
+```{r}
+table(income_group)
+prop.table(table(income_group))
+
+```
+```{r}
+table (region)
+prop.table(table(region))
+
+```
+```{r}
+any(is.na(datos))
+#Getting countries with NA value in global_index
+datos_na <- datos[is.na(global_index),]
+```
+```{r}
+datos_no_na <- setdiff(datos, datos_na)
+attach(datos_no_na)
+```
+```{r}
+range(global_index)
+```
+
+```{r}
+nclass.Sturges(global_index)
+```
+```{r}
+seq(23.13, 100,length=nclass.Sturges(global_index))
+```
+```{r}
+intervalos=cut(global_index,breaks=seq(23.13, 100,length=nclass.Sturges(global_index)),include.lowest=TRUE)
+intervalos
+```
+```{r}
+table(intervalos)
+prop.table(table(intervalos))
+```
+
+```{r}
+mi_moda<-function(var){
+  frec.var<-table(var)
+  valor<-which(frec.var==max(frec.var)) # Elementos con el valor máximo
+  names(valor)
+}
+
+```
+
+```{r}
+mi_moda(region)
+mi_moda(income_group)
+mi_moda(`GOING PLACES`)
+mi_moda(`STARTING A JOB`)
+mi_moda(`GETTING PAID`)
+mi_moda(`GETTING MARRIED`)
+mi_moda(`HAVING_CHILDREN`)
+mi_moda(`RUNNING BUSINESS`)
+mi_moda(`MANAGING ASSETS`)
+mi_moda(`GETTING A PENSION`)
+
+```
+
+```{r}
+#Para conocer la moda en los intervalos de índice global
+mi_moda(intervalos)
+```
+
+### Medidas de tendencia central
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
