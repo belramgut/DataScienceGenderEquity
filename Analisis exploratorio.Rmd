@@ -62,7 +62,7 @@ prop.table(table(intervalos))
 ```{r}
 mi_moda<-function(var){
   frec.var<-table(var)
-  valor<-which(frec.var==max(frec.var)) # Elementos con el valor mÃ¡ximo
+  valor<-which(frec.var==max(frec.var)) # Elementos con el valor maximo
   names(valor)
 }
 
@@ -83,19 +83,228 @@ mi_moda(`GETTING A PENSION`)
 ```
 
 ```{r}
-#Para conocer la moda en los intervalos de Ã­ndice global
+#Para conocer la moda en los intervalos de indice global
 mi_moda(intervalos)
 ```
 
 ### Medidas de tendencia central
 
+#### Media (sensible a outliers)
 
+```{r}
+mean(`GOING PLACES`)
+mean(`STARTING A JOB`)
+mean(`GETTING PAID`)
+mean(`GETTING MARRIED`)
+mean(`HAVING_CHILDREN`)
+mean(`RUNNING BUSINESS`)
+mean(`MANAGING ASSETS`)
+mean(`GETTING A PENSION`)
+mean(global_index)
+```
 
+#### Media robusta
 
+```{r}
+mean(`GOING PLACES`,trim=0.1)
+mean(`STARTING A JOB`,trim=0.1)
+mean(`GETTING PAID`,trim=0.1)
+mean(`GETTING MARRIED`,trim=0.1)
+mean(`HAVING_CHILDREN`,trim=0.1)
+mean(`RUNNING BUSINESS`,trim=0.1)
+mean(`MANAGING ASSETS`,trim=0.1)
+mean(`GETTING A PENSION`,trim=0.1)
+mean(global_index,trim=0.1)
+```
 
+#### Mediana
 
+```{r}
+median(`GOING PLACES`)
+median(`STARTING A JOB`)
+median(`GETTING PAID`)
+median(`GETTING MARRIED`)
+median(`HAVING_CHILDREN`)
+median(`RUNNING BUSINESS`)
+median(`MANAGING ASSETS`)
+median(`GETTING A PENSION`)
+median(global_index)
+```
 
+### Percentiles o cuantiles
 
+```{r}
+quantile(`GOING PLACES`,seq(0,1,0.25))
+quantile(`STARTING A JOB`,seq(0,1,0.25))
+quantile(`GETTING PAID`,seq(0,1,0.25))
+quantile(`GETTING MARRIED`,seq(0,1,0.25))
+quantile(`HAVING_CHILDREN`,seq(0,1,0.25))
+quantile(`RUNNING BUSINESS`,seq(0,1,0.25))
+quantile(`MANAGING ASSETS`,seq(0,1,0.25))
+quantile(`GETTING A PENSION`,seq(0,1,0.25))
+quantile(global_index,seq(0,1,0.25))
+
+```
+
+### Resumen del data frame
+
+```{r}
+summary(datos)
+```
+
+```{r}
+print(" ----- GOING PLACES ----- ")
+tapply(`GOING PLACES`,region,summary)
+print("-----  STARTING A JOB ----- ")
+tapply(`STARTING A JOB`,region,summary)
+print("-----  GETTING PAID ----- ")
+tapply(`GETTING PAID`,region,summary)
+print("----- GETTING MARRIED ----- ")
+tapply(`GETTING MARRIED`,region,summary)
+print("----- HAVING CHILDREN ----- ")
+tapply(`HAVING_CHILDREN`,region,summary)
+print("----- RUNNING BUSINESS ----- ")
+tapply(`RUNNING BUSINESS`,region,summary)
+print("----- MANAGING ASSETS ----- ")
+tapply(`MANAGING ASSETS`,region,summary)
+print("----- GETTING A PENSION ----- ")
+tapply(`GETTING A PENSION`,region,summary)
+print("----- global_index ----- ")
+tapply(global_index,region,summary)
+```
+
+### Medidas de dispersion
+
+#### Rango
+
+```{r}
+max(global_index)-min(global_index)
+max(`GOING PLACES`)-min(`GOING PLACES`)
+max(`STARTING A JOB`)-min(`STARTING A JOB`)
+max(`GETTING PAID`)-min(`GETTING PAID`)
+max(`GETTING MARRIED`)-min(`GETTING MARRIED`)
+max(`HAVING_CHILDREN`)-min(`HAVING_CHILDREN`)
+max(`RUNNING BUSINESS`)-min(`RUNNING BUSINESS`)
+max(`MANAGING ASSETS`)-min(`MANAGING ASSETS`)
+max(`GETTING A PENSION`)-min(`GETTING A PENSION`)
+
+```
+
+#### Desviacion estandar (sensible a outliers)
+
+```{r}
+sd(`GOING PLACES`)
+sd(`STARTING A JOB`)
+sd(`GETTING PAID`)
+sd(`GETTING MARRIED`)
+sd(`HAVING_CHILDREN`)
+sd(`RUNNING BUSINESS`)
+sd(`MANAGING ASSETS`)
+sd(`GETTING A PENSION`)
+sd(global_index)
+```
+
+#### Desviacion media absoluta (AAD)
+
+```{r}
+aad<-function(x,fun=median){
+  mean(abs(x-fun(x)))
+}
+```
+
+```{r}
+#con mediana
+aad(`GOING PLACES`)
+aad(`STARTING A JOB`)
+aad(`GETTING PAID`)
+aad(`GETTING MARRIED`)
+aad(`HAVING_CHILDREN`)
+aad(`RUNNING BUSINESS`)
+aad(`MANAGING ASSETS`)
+aad(`GETTING A PENSION`)
+aad(global_index)
+```
+
+```{r}
+#con media
+aad(`GOING PLACES`,mean)
+aad(`STARTING A JOB`,mean)
+aad(`GETTING PAID`,mean)
+aad(`GETTING MARRIED`,mean)
+aad(`HAVING_CHILDREN`,mean)
+aad(`RUNNING BUSINESS`,mean)
+aad(`MANAGING ASSETS`,mean)
+aad(`GETTING A PENSION`,mean)
+aad(global_index,mean)
+```
+
+#### Rango inter-cuartil (IQR)
+
+```{r}
+IQR(`GOING PLACES`)
+IQR(`STARTING A JOB`)
+IQR(`GETTING PAID`)
+IQR(`GETTING MARRIED`)
+IQR(`HAVING_CHILDREN`)
+IQR(`RUNNING BUSINESS`)
+IQR(`MANAGING ASSETS`)
+IQR(`GETTING A PENSION`)
+IQR(global_index)
+```
+
+### Medidas multivaluadas
+
+#### Covarianza (variación lineal de una variable respecto a la otra)
+```{r}
+#Limpieza de dataset para hacerlo solo sobre las columnas con datos continuos
+datos_continuous_features <- datos_no_na %>% select_if(is.numeric)
+drop.cols <- c("year")
+datos_continuous_features <- datos_continuous_features %>% select(-drop.cols) 
+
+```
+
+```{r}
+cov(datos_continuous_features)
+```
+
+#### Correlacion
+
+```{r}
+cor(datos_continuous_features)
+```
+
+### Visualización
+
+#### Histogramas
+
+```{r}
+# hist para continuas
+ggplot(gather(datos_continuous_features), aes(value)) + geom_histogram() + facet_wrap(~key, scales = 'free_x')
+```
+
+```{r}
+
+prop_region <- as_tibble(prop.table(table(region)))
+ggplot(data=prop_region,aes(x=region, y=n)) + geom_bar(stat="identity", width=0.5, fill="steelblue") + theme_minimal() + theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
+```
+
+#### Densidad
+
+```{r}
+hist(global_index, col = "blue",freq=FALSE)
+lines(density(global_index),main="Densidad", col="red",lwd=2)
+
+ggplot(gather(datos_continuous_features), aes(value)) + geom_histogram(aes(y=stat(density))) + geom_density(col="red") + facet_wrap(~key, scales = 'free_x')
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
 
 
 
