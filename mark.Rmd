@@ -1,0 +1,42 @@
+---
+title: "Seguimiento"
+author: "Angel"
+date: "20 de marzo de 2019"
+output: html_document
+---
+Cargamos librerías
+```{r}
+install.packages("tidyverse")
+install.packages("ggrepel")
+library(tidyverse)
+library(readxl)
+library(ggrepel)#Puntos con nombre
+```
+
+```{r}
+##Importación dataset
+datos<-read_excel("wbldata.xlsx",sheet="wbldata")
+##Filtrado por región
+datos_oecd<-datos %>% filter(region =="High income: OECD")
+
+```
+
+
+```{r pressure, echo=FALSE}
+##Evolución países en oecd
+oecd_global_index1 <- ggplot(datos_oecd, aes(x = year , y =as.numeric(global_index))) + geom_line(color= 'blue',linetype='solid') + facet_wrap(~country,ncol=8) + theme_light()
+oecd_global_index1
+```
+
+```{r}
+#Evolución global a lo largo de los años
+oecd_global_index2 <- ggplot(datos, aes(x = year, y = as.numeric(global_index), by=country ,color=region)) + geom_line() + geom_point()
+oecd_global_index2
+```
+```{r}
+#Ley para cobrar lo mismo
+salario <- ggplot(datos_oecd, aes(x = equal_work_remuneration_law, y = as.numeric(global_index), color=country)) + geom_point() 
+salario
+```
+
+
